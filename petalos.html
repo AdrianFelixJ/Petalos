@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Me quiere? 🌸</title>
+    <style>
+        :root {
+            --rosa-claro: #ffb7d5;
+            --rosa-fuerte: #f06292;
+            --centro-turquesa: #00bfa5;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff5f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        #mensaje {
+            font-size: 2rem;
+            color: #d81b60;
+            margin-bottom: 60px;
+            text-align: center;
+            font-weight: bold;
+            min-height: 2.5rem;
+        }
+
+        .contenedor-flor {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .centro {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: var(--centro-turquesa);
+            border: 3px solid #00897b;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: inset -4px -4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Brillo del centro */
+        .centro::after {
+            content: '';
+            position: absolute;
+            width: 12px; height: 12px;
+            background: white;
+            border-radius: 50%;
+            top: 10px; left: 10px;
+            opacity: 0.7;
+        }
+
+        .petalo {
+            position: absolute;
+            width: 70px;
+            height: 100px;
+            background: var(--rosa-claro);
+            border: 3px solid #c2185b;
+            border-radius: 50% 50% 40% 40%;
+            left: 50%;
+            top: 50%;
+            margin-left: -35px;
+            margin-top: -100px;
+            transform-origin: bottom center;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.5, -0.5, 0.5, 1.5);
+            z-index: 5;
+        }
+
+        /* Efecto glossy y color interno */
+        .petalo::before {
+            content: '';
+            position: absolute;
+            width: 60%; height: 70%;
+            background: var(--rosa-fuerte);
+            bottom: 0; left: 20%;
+            border-radius: 50% 50% 0 0;
+            opacity: 0.5;
+        }
+
+        .quitado {
+            opacity: 0;
+            transform: translateY(400px) rotate(120deg) scale(0) !important;
+            pointer-events: none;
+        }
+
+        button {
+            margin-top: 50px;
+            padding: 10px 20px;
+            border: none;
+            background: #d81b60;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mensaje">Toca un pétalo... ✨</div>
+
+    <div class="contenedor-flor" id="flor">
+        <div class="centro"></div>
+        <!-- Los pétalos se generarán aquí con JS -->
+    </div>
+
+    <button id="btnReiniciar" onclick="crearFlor()">Nueva Flor 🌸</button>
+
+    <script>
+        const contenedor = document.getElementById('flor');
+        const mensaje = document.getElementById('mensaje');
+        const btn = document.getElementById('btnReiniciar');
+        let contador = 0;
+        let totalPetalos = 0;
+
+        function crearFlor() {
+            // Limpiar pétalos anteriores
+            const petalosExistentes = document.querySelectorAll('.petalo');
+            petalosExistentes.forEach(p => p.remove());
+            
+            contador = 0;
+            btn.style.display = 'none';
+            mensaje.innerText = "Toca un pétalo... ✨";
+            mensaje.style.color = "#d81b60";
+
+            // Número aleatorio entre 5 y 10
+            totalPetalos = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+
+            for (let i = 0; i < totalPetalos; i++) {
+                const petalo = document.createElement('div');
+                petalo.className = 'petalo';
+                const rotacion = (360 / totalPetalos) * i;
+                petalo.style.transform = `rotate(${rotacion}deg)`;
+                petalo.dataset.rotacion = rotacion; // Guardar para el efecto hover
+
+                petalo.onclick = function() {
+                    if (!this.classList.contains('quitado')) {
+                        this.classList.add('quitado');
+                        contador++;
+                        
+                        if (contador % 2 !== 0) {
+                            mensaje.innerText = "¡Me quiere! ❤️";
+                        } else {
+                            mensaje.innerText = "No me quiere... 💔";
+                        }
+
+                        if (contador === totalPetalos) {
+                            setTimeout(() => {
+                                mensaje.innerText = "¡Resultado Final! ✨";
+                                btn.style.display = 'block';
+                            }, 500);
+                        }
+                    }
+                };
+                contenedor.appendChild(petalo);
+            }
+        }
+
+        // Iniciar la primera flor
+        crearFlor();
+    </script>
+</body>
+</html>
